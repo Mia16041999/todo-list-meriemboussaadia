@@ -120,16 +120,6 @@ body::-webkit-scrollbar-thumb {
 	border-radius: 0.28571429rem !important;
 	box-shadow: 0 0 0 1px var(--red) inset, 0 0 0 0 transparent;
 }
-
-/* Responsive */
-@media screen and (max-width: 770px) {
-	#add-task,
-	#buttons,
-	#tasks-list {
-		width: 100%;
-	}
-}
-/* Priority styles */
 .priority-high {
 	border-left: 4px solid red; /* or any color you wish */
   }
@@ -141,4 +131,23 @@ body::-webkit-scrollbar-thumb {
   .priority-low {
 	border-left: 4px solid green; /* or any color you wish */
   }
-  
+/* Category Dropdown in Add Task Form */
+#add-task .ui.dropdown {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Category Filter Dropdown */
+#category-filter .ui.form {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+/* Responsive */
+@media screen and (max-width: 770px) {
+	#add-task,
+	#buttons,
+	#tasks-list {
+		width: 100%;
+	}
+}
+
