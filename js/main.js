@@ -11,82 +11,103 @@ let list = JSON.parse(localStorage.getItem("tasks")) || []
  * Show All Tasks From Local Storage In Page
  */
 function showTasksList() {
-  tasksList.innerHTML = ""
-  const list = JSON.parse(localStorage.getItem("tasks")) || []
+  tasksList.innerHTML = "";
+ 
 
   if (list.length === 0) {
-    clearAllTasksBtn.disabled = true
+    clearAllTasksBtn.disabled = true;
 
-    const element = String.raw`
-			<div class="ui icon warning message">
-				<i class="inbox icon"></i>
-				<div class="content">
-					<div class="header">You have nothing task today!</div>
-					<div>Enter your tasks today above.</div>
-				</div>
-			</div>
-		`
+    const noTaskElement = `
+      <div class="ui icon warning message">
+        <i class="inbox icon"></i>
+        <div class="content">
+          <div class="header">You have nothing task today!</div>
+          <p>Enter your tasks today above.</p>
+        </div>
+      </div>
+    `;
 
-    tasksList.style.border = "none"
-    return tasksList.insertAdjacentHTML("beforeend", element)
+    tasksList.style.border = "none";
+    tasksList.insertAdjacentHTML("beforeend", noTaskElement);
+    return;
   }
 
-  clearAllTasksBtn.disabled = false
-  tasksList.style.border = "1px solid rgba(34,36,38,.15)"
-  list.reverse().forEach(task => {
-    const element = String.raw`
-				<li class="ui segment grid equal width">
-					<div class="ui checkbox column">
-						<input type="checkbox" ${task.completed ? "checked" : ""}>
-						<label>${task.text}</label>
-					</div>
-					<div class="column">
-						<i data-id="${task.id}" class="edit outline icon"></i>
-						<i data-id="${task.id}" class="trash alternate outline remove icon"></i>
-					</div>
-				</li>
-			`
+  clearAllTasksBtn.disabled = false;
+  tasksList.style.border = "1px solid rgba(34,36,38,.15)";
 
-    tasksList.insertAdjacentHTML("beforeend", element)
-  })
+  // Sort the tasks by priority
+  list.sort((a, b) => {
+    const priorityLevels = { high: 1, medium: 2, low: 3 };
+    return priorityLevels[a.priority] - priorityLevels[b.priority];
+  });
 
+  list.forEach(task => {
+    const priorityClass = `priority-${task.priority}`; // Use this for styling
+    const priorityIndicator = task.priority ? `(${task.priority.toUpperCase()}) ` : ''; // Display the priority
+    const taskElement = `
+      <li class="ui segment grid equal width ${priorityClass}">
+        <div class="ui checkbox column">
+          <input type="checkbox" ${task.completed ? "checked" : ""} onclick="completeTask(${task.id})">
+          <label>${priorityIndicator}${task.text}</label> <!-- Add the priority indicator here -->
+        </div>
+        <div class="column">
+          <i data-id="${task.id}" class="edit outline icon"></i>
+          <i data-id="${task.id}" class="trash alternate outline remove icon"></i>
+        </div>
+      </li>
+    `;
+
+    tasksList.insertAdjacentHTML("beforeend", taskElement);
+  });
+
+  // Add event listeners to the edit and trash icons
   document.querySelectorAll(`li i.edit`).forEach(item => {
     item.addEventListener("click", e => {
-      e.stopPropagation()
-      showEditModal(+e.target.dataset.id)
-    })
-  })
+      e.stopPropagation();
+      showEditModal(+e.target.dataset.id);
+    });
+  });
+
 
   document.querySelectorAll(`li i.trash`).forEach(item => {
     item.addEventListener("click", e => {
-      e.stopPropagation()
-      showRemoveModal(+e.target.dataset.id)
-    })
-  })
+      e.stopPropagation();
+      showRemoveModal(+e.target.dataset.id);
+    });
+  });
 }
+
 
 /**
  * Add new task to local storage
  */
 function addTask(event) {
-  event.preventDefault()
-
-  const taskText = addTaskInput.value
-  if (taskText.trim().length === 0) {
-    return (addTaskInput.value = "")
+  event.preventDefault();
+  const taskText = addTaskInput.value.trim();
+  const taskPriority = document.querySelector("#add-task-priority").value;
+  
+  if (!taskText || !taskPriority) {
+    // You can also show a notification to the user here if needed
+    console.error("Task text or priority is not set.");
+    return;
   }
 
-  list.push({
-    id: list.length + 1,
+  const newTask = {
+    id: Date.now(), // Consider using Date.now() for a unique ID
     text: taskText,
+    priority: taskPriority,
     completed: false,
-  })
-  localStorage.setItem("tasks", JSON.stringify(list))
-  addTaskInput.value = ""
+  };
 
-  showNotification("success", "Task was successfully added")
-  showTasksList()
+  list.push(newTask);
+  localStorage.setItem("tasks", JSON.stringify(list));
+  addTaskInput.value = "";
+  document.querySelector("#add-task-priority").value = "";
+
+  showNotification("success", "Task was successfully added");
+  showTasksList();
 }
+
 
 // Change Complete State
 function completeTask(id) {

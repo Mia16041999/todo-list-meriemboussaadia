@@ -129,3 +129,16 @@ body::-webkit-scrollbar-thumb {
 		width: 100%;
 	}
 }
+/* Priority styles */
+.priority-high {
+	border-left: 4px solid red; /* or any color you wish */
+  }
+  
+  .priority-medium {
+	border-left: 4px solid orange; /* or any color you wish */
+  }
+  
+  .priority-low {
+	border-left: 4px solid green; /* or any color you wish */
+  }
+  
