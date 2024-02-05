@@ -129,3 +129,27 @@ body::-webkit-scrollbar-thumb {
 		width: 100%;
 	}
 }
+/* ... Existing Styles ... */
+
+/* Category Dropdown in Add Task Form */
+#add-task .ui.dropdown {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Category Filter Dropdown */
+#category-filter .ui.form {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 770px) {
+    /* ... existing responsive styles ... */
+
+    #add-task .ui.dropdown,
+    #category-filter .ui.form {
+        width: 100%;
+    }
+}
+

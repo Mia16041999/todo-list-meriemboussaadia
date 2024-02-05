@@ -36,16 +36,35 @@
 
     <div class="ui container">
       <!-- Add Task -->
-      <form id="add-task" class="ui left icon input fluid">
-        <input
-          id="add-task-input"
-          class="large"
-          type="text"
-          placeholder="Write your task here..."
-        />
-        <i class="tasks icon"></i>
-      </form>
+      <form id="add-task" class="ui form">
+        <div class="ui left icon input fluid">
+            <input id="add-task-input" class="large" type="text" placeholder="Write your task here..." />
+            <i class="tasks icon"></i>
+        </div>
+        <div class="field">
+            <label>Task Category:</label>
+            <select id="task-category" class="ui dropdown">
+                <option value="personal">Personal</option>
+                <option value="work">Work</option>
+                <option value="school">School</option>
+            </select>
+        </div>
+        <button type="submit" class="ui button primary">Add Task</button>
+    </form>
       <!-- End Add Task -->
+           <!-- Category Filter -->
+           <div id="category-filter" class="ui form">
+            <div class="field">
+                <label>Filter by Category:</label>
+                <select onchange="filterTasksByCategory(this.value)" class="ui dropdown">
+                    <option value="all">All Categories</option>
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="school">School</option>
+                </select>
+            </div>
+        </div>
+        <!-- End Category Filter -->
 
       <!-- Buttons -->
       <div id="buttons" class="ui stackable grid equal width">

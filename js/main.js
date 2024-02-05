@@ -1,4 +1,5 @@
 // Elements
+// main.js - Main JavaScript file for the To-Do List App
 const tasksList = document.querySelector("#tasks-list")
 const addTaskForm = document.querySelector("form#add-task")
 const addTaskInput = document.querySelector("#add-task-input")
@@ -69,23 +70,27 @@ function showTasksList() {
  * Add new task to local storage
  */
 function addTask(event) {
-  event.preventDefault()
+  event.preventDefault();
 
-  const taskText = addTaskInput.value
+  const taskText = addTaskInput.value;
+  const selectedCategory = document.querySelector('#task-category').value; // Retrieve the selected category
+
   if (taskText.trim().length === 0) {
-    return (addTaskInput.value = "")
+      return (addTaskInput.value = "");
   }
 
   list.push({
-    id: list.length + 1,
-    text: taskText,
-    completed: false,
-  })
-  localStorage.setItem("tasks", JSON.stringify(list))
-  addTaskInput.value = ""
+      id: list.length + 1,
+      text: taskText,
+      completed: false,
+      category: selectedCategory // Include the category in the new task
+  });
 
-  showNotification("success", "Task was successfully added")
-  showTasksList()
+  localStorage.setItem("tasks", JSON.stringify(list));
+  addTaskInput.value = "";
+
+  showNotification("success", "Task was successfully added");
+  showTasksList();
 }
 
 // Change Complete State
