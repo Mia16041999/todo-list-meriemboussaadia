@@ -1,199 +1,271 @@
 // Elements
-const tasksList = document.getElementById('tasks-list')
-const addTaskInput = document.getElementById('add-task-input')
+// main.js - Main JavaScript file for the To-Do List App
+const tasksList = document.querySelector("#tasks-list")
+const addTaskForm = document.querySelector("form#add-task")
+const addTaskInput = document.querySelector("#add-task-input")
+const clearAllTasksBtn = document.querySelector("button#clear-all-tasks")
 
 // Total List Of Tasks
-let list = JSON.parse(localStorage.getItem('tasks')) || []
+let list = JSON.parse(localStorage.getItem("tasks")) || []
 
-// Show All Tasks From Local Storage In Page
+/**
+ * Show All Tasks From Local Storage In Page
+ */
 function showTasksList() {
-    tasksList.innerHTML = ''
-    // Reverse Sort List
-    const list = JSON.parse(localStorage.getItem('tasks')).reverse()
+  tasksList.innerHTML = "";
+ 
 
-    if (list.length > 0) {
-        for (const task of list) {
-            // <li> tag
-            const li = document.createElement('li')
-            li.classList.add('flex')
+  if (list.length === 0) {
+    clearAllTasksBtn.disabled = true;
 
-            // <span> tag
-            const span = document.createElement('span')
-            span.setAttribute('onclick', `completeTask(${task.id})`)
+    const noTaskElement = `
+      <div class="ui icon warning message">
+        <i class="inbox icon"></i>
+        <div class="content">
+          <div class="header">You have nothing task today!</div>
+          <p>Enter your tasks today above.</p>
+        </div>
+      </div>
+    `;
 
-            // <i> tag
-            const i = document.createElement('i')
-            if (task.completed === true) {
-                li.appendChild(span)
-                span.classList.add('completed')
-                span.appendChild(i)
-                i.classList.add('bx', 'bx-check')
-            } else li.appendChild(span)
+    tasksList.style.border = "none";
+    tasksList.insertAdjacentHTML("beforeend", noTaskElement);
+    return;
+  }
 
-            // Check If Completed
-            if (task.completed === true) {
-                const del = document.createElement('del')
-                del.textContent = task.text
-                li.appendChild(del)
-            } else {
-                const div = document.createElement('div')
-                div.classList.add('task')
-                div.textContent = task.text
-                li.appendChild(div)
-            }
+  clearAllTasksBtn.disabled = false;
+  tasksList.style.border = "1px solid rgba(34,36,38,.15)";
 
-            // Edit Button
-            const edit = document.createElement('i')
-            edit.setAttribute('onclick', `editTask(${task.id})`)
-            edit.classList.add('edit', 'bx', 'bxs-edit')
-            li.appendChild(edit)
+  // Sort the tasks by priority
+  list.sort((a, b) => {
+    const priorityLevels = { high: 1, medium: 2, low: 3 };
+    return priorityLevels[a.priority] - priorityLevels[b.priority];
+  });
 
-            // Remove Button
-            const remove = document.createElement('i')
-            remove.setAttribute('onclick', `removeTask(${task.id})`)
-            remove.classList.add('remove', 'bx', 'bx-trash-alt')
-            li.appendChild(remove)
+  list.forEach(task => {
+    const priorityClass = `priority-${task.priority}`; // Use this for styling
+    const priorityIndicator = task.priority ? `(${task.priority.toUpperCase()}) ` : ''; // Display the priority
+    const taskElement = `
+      <li class="ui segment grid equal width ${priorityClass}">
+        <div class="ui checkbox column">
+          <input type="checkbox" ${task.completed ? "checked" : ""} onclick="completeTask(${task.id})">
+          <label>${priorityIndicator}${task.text}</label> <!-- Add the priority indicator here -->
+        </div>
+        <div class="column">
+          <i data-id="${task.id}" class="edit outline icon"></i>
+          <i data-id="${task.id}" class="trash alternate outline remove icon"></i>
+        </div>
+      </li>
+    `;
 
-            // Append Child <li>
-            tasksList.appendChild(li)
-        }
-    } else {
-        const div = document.createElement('div')
-        div.classList.add('alert', 'alert-warning')
-        div.innerHTML = 'You have nothing task today!<br />Enter your tasks today above'
-        tasksList.appendChild(div)
-    }
+    tasksList.insertAdjacentHTML("beforeend", taskElement);
+  });
+
+  // Add event listeners to the edit and trash icons
+  document.querySelectorAll(`li i.edit`).forEach(item => {
+    item.addEventListener("click", e => {
+      e.stopPropagation();
+      showEditModal(+e.target.dataset.id);
+    });
+  });
+
+
+  document.querySelectorAll(`li i.trash`).forEach(item => {
+    item.addEventListener("click", e => {
+      e.stopPropagation();
+      showRemoveModal(+e.target.dataset.id);
+    });
+  });
 }
 
-// Add New Task To Local Storage
+
+/**
+ * Add new task to local storage
+ */
 function addTask(event) {
-    if (event.keyCode == 13) {
-        list.push({
-            id: list.length + 1,
-            text: event.target.value,
-            completed: false
-        })
+  event.preventDefault();
+<<<<<<< HEAD
 
-        localStorage.setItem('tasks', JSON.stringify(list))
+  const taskText = addTaskInput.value;
+  const selectedCategory = document.querySelector('#task-category').value; // Retrieve the selected category
 
-        Toastify({
-            text: 'New task added',
-            duration: 3000,
-            close: true,
-            gravity: 'bottom',
-            position: 'left',
-            backgroundColor: 'linear-gradient(to right, #525879, #181f47)',
-            stopOnFocus: true
-        }).showToast()
+  if (taskText.trim().length === 0) {
+      return (addTaskInput.value = "");
+  }
 
-        event.target.value = ''
-        showTasksList()
-    }
+  list.push({
+      id: list.length + 1,
+      text: taskText,
+      completed: false,
+      category: selectedCategory // Include the category in the new task
+  });
+
+  localStorage.setItem("tasks", JSON.stringify(list));
+  addTaskInput.value = "";
+=======
+  const taskText = addTaskInput.value.trim();
+  const taskPriority = document.querySelector("#add-task-priority").value;
+  
+  if (!taskText || !taskPriority) {
+    // You can also show a notification to the user here if needed
+    console.error("Task text or priority is not set.");
+    return;
+  }
+
+  const newTask = {
+    id: Date.now(), // Consider using Date.now() for a unique ID
+    text: taskText,
+    priority: taskPriority,
+    completed: false,
+  };
+
+  list.push(newTask);
+  localStorage.setItem("tasks", JSON.stringify(list));
+  addTaskInput.value = "";
+  document.querySelector("#add-task-priority").value = "";
+>>>>>>> 0a3f591398d1a9a7ab733ced5296fc53a9035364
+
+  showNotification("success", "Task was successfully added");
+  showTasksList();
 }
+
 
 // Change Complete State
 function completeTask(id) {
-    // Get Task
-    const taskIndex = list.findIndex(t => t.id == id)
-    const task = list[taskIndex]
+  // Get Task
+  const taskIndex = list.findIndex(t => t.id == id)
+  const task = list[taskIndex]
 
-    // Change State
-    task.completed ? (task.completed = false) : (task.completed = true)
-    list[taskIndex] = task
+  // Change State
+  task.completed = !task.completed
+  list[taskIndex] = task
 
-    // Save Changes
-    localStorage.setItem('tasks', JSON.stringify(list))
-    showTasksList()
+  // Save Changes
+  localStorage.setItem("tasks", JSON.stringify(list))
+  showTasksList()
 }
 
-// Remove Task
+/**
+ * Remove task
+ */
 function removeTask(id) {
-    // Change State
-    list = list.filter(t => t.id !== id)
-    localStorage.setItem('tasks', JSON.stringify(list))
+  list = list.filter(t => t.id !== id)
+  localStorage.setItem("tasks", JSON.stringify(list))
 
-    // Show Alert And Render List
-    Toastify({
-        text: 'Task removed',
-        duration: 3000,
-        close: true,
-        gravity: 'bottom',
-        position: 'left',
-        backgroundColor: 'linear-gradient(to right, #e45757, #d44747)',
-        stopOnFocus: true
-    }).showToast()
-    showTasksList()
+  showNotification("error", "Task was successfully deleted")
+  showTasksList()
 }
 
-// Edit Task
+/**
+ * Edit task
+ */
 function editTask(id) {
-    // Get Task
-    const taskEdited = prompt('Edit your task here...')
-    if (taskEdited == '' || taskEdited == null) return
-    const taskIndex = list.findIndex(t => t.id == id)
+  const taskText = document.querySelector("#task-text").value
 
-    // Change State And Save Changes
-    list[taskIndex].text = taskEdited
-    localStorage.setItem('tasks', JSON.stringify(list))
+  if (taskText.trim().length === 0) return
+  const taskIndex = list.findIndex(t => t.id == id)
 
-    // Show Alert And Then Render List
-    Toastify({
-        text: 'Task edited',
-        duration: 3000,
-        close: true,
-        gravity: 'bottom',
-        position: 'left',
-        backgroundColor: 'linear-gradient(to right, #47d453, #35ac3f)',
-        stopOnFocus: true
-    }).showToast()
-    showTasksList()
+  list[taskIndex].text = taskText
+  localStorage.setItem("tasks", JSON.stringify(list))
+
+  showNotification("success", "Task was successfully updated")
+  showTasksList()
 }
 
 // Clear All Tasks
 function clearAllTasks() {
-    if (list.length > 0) {
-        if (confirm('Are you sure?')) {
-            list = []
-            localStorage.setItem('tasks', JSON.stringify(list))
+  if (list.length > 0) {
+    list = []
+    localStorage.setItem("tasks", JSON.stringify(list))
+    return showTasksList()
+  }
 
-            showTasksList()
-        }
-    } else {
-        Toastify({
-            text: 'There is no task to remove',
-            duration: 3000,
-            close: true,
-            gravity: 'bottom',
-            position: 'left',
-            backgroundColor: 'linear-gradient(to right, #e45757, #d44747)',
-            stopOnFocus: true
-        }).showToast()
-    }
+  new Noty({
+    type: "error",
+    text: '<i class="close icon"></i> There is no task to remove.',
+    layout: "bottomRight",
+    timeout: 2000,
+    progressBar: true,
+    closeWith: ["click"],
+    theme: "metroui",
+  }).show()
 }
 
 // Clear Complete Tasks
 function clearCompleteTasks() {
-    if (list.length > 0) {
-        if (confirm('Are you sure?')) {
-            const filteredTasks = list.filter(t => t.completed !== true)
-            localStorage.setItem('tasks', JSON.stringify(filteredTasks))
-            showTasksList()
-        }
-    } else {
-        Toastify({
-            text: 'There is no task to remove',
-            duration: 3000,
-            close: true,
-            gravity: 'bottom',
-            position: 'left',
-            backgroundColor: 'linear-gradient(to right, #e45757, #d44747)',
-            stopOnFocus: true
-        }).showToast()
+  if (list.length > 0) {
+    if (confirm("Are you sure?")) {
+      const filteredTasks = list.filter(t => t.completed !== true)
+      localStorage.setItem("tasks", JSON.stringify(filteredTasks))
+      return showTasksList()
     }
+  }
+
+  Toastify({
+    text: "There is no task to remove",
+    duration: 3000,
+    close: true,
+    gravity: "bottom",
+    position: "left",
+    backgroundColor: "linear-gradient(to right, #e45757, #d44747)",
+    stopOnFocus: true,
+  }).showToast()
+}
+
+// Show Edit Modal And Pass Data
+function showEditModal(id) {
+  const taskIndex = list.findIndex(t => t.id == id)
+  const { text } = list[taskIndex]
+
+  document.querySelector("#edit-modal .content #task-id").value = id
+  document.querySelector("#edit-modal .content #task-text").value = text.trim()
+  document
+    .querySelector("#update-button")
+    .addEventListener("click", () => editTask(+id))
+
+  $("#edit-modal.modal").modal("show")
+}
+
+// Show Remove Modal
+function showRemoveModal(id) {
+  document
+    .querySelector("#remove-button")
+    .addEventListener("click", () => removeTask(+id))
+
+  $("#remove-modal.modal").modal("show")
+}
+
+// Show Clear All Tasks Modal
+function showClearAllTasksModal() {
+  if (list.length > 0) {
+    return $("#clear-all-tasks-modal.modal").modal("show")
+  }
+
+  new Noty({
+    type: "error",
+    text: '<i class="close icon"></i> There is no task to remove.',
+    layout: "bottomRight",
+    timeout: 2000,
+    progressBar: true,
+    closeWith: ["click"],
+    theme: "metroui",
+  }).show()
+}
+
+function showNotification(type, text) {
+  new Noty({
+    type,
+    text: `<i class="check icon"></i> ${text}`,
+    layout: "bottomRight",
+    timeout: 2000,
+    progressBar: true,
+    closeWith: ["click"],
+    theme: "metroui",
+  }).show()
 }
 
 // Event Listeners
-addTaskInput.addEventListener('keypress', addTask)
-window.addEventListener('load', () => addTaskInput.focus())
+addTaskForm.addEventListener("submit", addTask)
+window.addEventListener("load", () => addTaskInput.focus())
 
 showTasksList()
