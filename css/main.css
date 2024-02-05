@@ -120,17 +120,17 @@ body::-webkit-scrollbar-thumb {
 	border-radius: 0.28571429rem !important;
 	box-shadow: 0 0 0 1px var(--red) inset, 0 0 0 0 transparent;
 }
-
-/* Responsive */
-@media screen and (max-width: 770px) {
-	#add-task,
-	#buttons,
-	#tasks-list {
-		width: 100%;
-	}
-}
-/* ... Existing Styles ... */
-
+.priority-high {
+	border-left: 4px solid red; /* or any color you wish */
+  }
+  
+  .priority-medium {
+	border-left: 4px solid orange; /* or any color you wish */
+  }
+  
+  .priority-low {
+	border-left: 4px solid green; /* or any color you wish */
+  }
 /* Category Dropdown in Add Task Form */
 #add-task .ui.dropdown {
     margin-top: 1rem;
@@ -142,14 +142,11 @@ body::-webkit-scrollbar-thumb {
     margin-top: 2rem;
     margin-bottom: 2rem;
 }
-
-/* Responsive Adjustments */
+/* Responsive */
 @media screen and (max-width: 770px) {
-    /* ... existing responsive styles ... */
-
-    #add-task .ui.dropdown,
-    #category-filter .ui.form {
-        width: 100%;
-    }
+	#add-task,
+	#buttons,
+	#tasks-list {
+		width: 100%;
+	}
 }
-
